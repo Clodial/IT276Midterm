@@ -26,6 +26,8 @@ Uint32 NOW;					/*the current time since program started*/
 Uint32 rmask,gmask,bmask,amask;
 ScreenData  S_Data;
 
+int col;
+
 void Init_Graphics()
 {	
 	Uint32 Vflags = SDL_ANYFORMAT;

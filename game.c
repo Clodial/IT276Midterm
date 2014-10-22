@@ -10,8 +10,9 @@ extern SDL_Surface *buffer; /*pointer to the draw buffer*/
 extern SDL_Rect Camera;
 
 void Init_All();
-int col;
-
+extern int col; /*Change state of the level*/
+extern int inAir; /*This is to make sure that a player can change the background all willy nilly*/
+extern int curLvl;
 /*this program must be run from the directory directly below images and src, not from within src*/
 /*notice the default arguments for main.  SDL expects main to look like that, so don't change it*/
 int main(int argc, char *argv[])
@@ -26,6 +27,7 @@ int main(int argc, char *argv[])
   Init_All();
   col = 0;
   temp = IMG_Load("images/redBack.png");
+  inAir = 1; /*This is something that will be determined based on if a character is in air*/
   if(temp != NULL){
 	bg = SDL_DisplayFormat(temp);
   }
@@ -33,23 +35,31 @@ int main(int argc, char *argv[])
   if(bg != NULL){
 	SDL_BlitSurface(bg,NULL,buffer,NULL);
   }
+  InitLvl();
   done = 0;
   do
   {
     ResetBuffer();
     NextFrame();
+	UpdateEnt();
+	DrawEnts();
     SDL_PumpEvents();
     keys = SDL_GetKeyState(&keyn);
-	tCol = col;
-	if(keys[SDLK_SPACE]){
-		if(tCol == 1){
+	tCol = col; /*Change state of background*/
+	if(tCol == 0){
+		temp = IMG_Load("images/blueBack.png");
+	}else{
+		temp = IMG_Load("images/redBack.png");
+	}
+	if(keys[SDLK_SPACE] && inAir == 0){
+		if(tCol == 0){
 			temp = IMG_Load("images/blueBack.png");
 			printf("blue");
-			tCol = 0;
+			tCol = 1;
 		}else{
 			temp = IMG_Load("images/redBack.png");
 			printf("red");
-			tCol = 1;
+			tCol = 0;
 		}
 		if(temp != NULL){
 			bg = SDL_DisplayFormat(temp);
@@ -58,7 +68,11 @@ int main(int argc, char *argv[])
 		if(bg != NULL){
 			SDL_BlitSurface(bg,NULL,buffer,NULL);
 		}
-		SDL_Delay(120);
+		SDL_Delay(200);
+	}
+	if(keys[SDLK_r]){
+		ReloadLevel(curLvl);
+		SDL_Delay(200);
 	}
 	col = tCol;
 	if(keys[SDLK_ESCAPE])done = 1;
@@ -76,7 +90,6 @@ void CleanUpAll()
 void Init_All()
 {
   Init_Graphics();
-  //InitLvl();
   InitMouse();
   atexit(CleanUpAll);
 }

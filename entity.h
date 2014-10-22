@@ -13,7 +13,7 @@
 #include "SDL_keysym.h"
 #include "graphics.h"
 
-#define MAXENTITIES 255
+#define MAXENTITIES 511
 
 enum MODES{
 	M_RED, M_BLUE, M_PURP
@@ -21,9 +21,9 @@ enum MODES{
 
 typedef struct Ent_s{
 	Sprite			*sprite;
-	int				show;
 	int				sx,sy;
-	SDL_Rect		bbox;
+	int				x,y; /*Not using SDL_Rect since I don't need it*/
+	int				w,h;
 	int				vx,vy;
 	int				mode; /*determines what form the world is in*/
 	int				active;
@@ -55,6 +55,6 @@ Entity	*CreateOb(int x, int y, Sprite *sprite, int mode);
 void	ObThink(Entity *self);
 
 /*Level Ender*/
-Entity	*CreateGoal(int x, int y, Sprite *sprite, int mode);
+Entity	*CreateGoal(int x, int y);
 void	GoalThink(Entity *self);
 #endif

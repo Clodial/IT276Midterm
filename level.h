@@ -7,17 +7,17 @@
 *	-Basically use as a set-up
 *
 */
+#define TILEH 32
+#define TILEW 32
+#define TILEX 20
+#define TILEY 15
 
-//#include "SDL.h"
-//
-//
-//void InitLvl();
-//
-//void LoadLvl();
-//void RendLvl();
-//void SpawnLvlEnt();
-//int *GetCurLvl(int lNum);
-//void NextLevel(int curLevel);
-//void ReloadLevel(int curLevel);
-//
+#include "SDL.h"
+
+
+void InitLvl();
+void LoadLvl(int curLevel);
+void NextLevel(int curLevel);
+void ReloadLevel(int curLevel);
+void ClearLvl();
 #endif

@@ -7,6 +7,7 @@
 #include <stdlib.h>
 #include <math.h>
 #include "SDL.h"
+#include "level.h"
 
 SDL_Event Event;
 
@@ -21,6 +22,9 @@ extern int CurrentLevel;
 */
 Entity *redChar;
 Entity *blueChar;
+int inAir;
+
+extern int curLvl;
 
 /*Main functions for initializing*/
 void InitEnt(){
@@ -29,7 +33,6 @@ void InitEnt(){
 	for(i = 0; i < MAXENTITIES; i++){
 		EntList[i].sprite = NULL;
 		EntList[i].think = NULL;
-		EntList[i].show = 0;
 		EntList[i].used = 0;
 	}
 }
@@ -50,7 +53,6 @@ void DrawEnts(){
 	int i;
 	for(i = 0; i < MAXENTITIES;i++){
 		if(EntList[i].used){
-	      if(EntList[i].show)
 	        DrawEnt(&EntList[i]);
 	    }
 	}
@@ -95,10 +97,12 @@ Entity *CreateChar(int x, int y, Sprite *s, int m){
 	player->solid = 1;
 	player->sprite = s;
 	player->mode = m;
-	player->bbox.x = x;
-	player->bbox.y = y;
-	player->bbox.w = 32;
-	player->bbox.h = 32;
+	player->x = x;
+	player->y = y;
+	player->sx = x;
+	player->sy = y;
+	player->w = 32;
+	player->h = 32;
 	player->think = CharThink;
 	player->frame = 0;
 	if(redChar != NULL){
@@ -111,48 +115,17 @@ Entity *CreateChar(int x, int y, Sprite *s, int m){
 	return player;
 }
 void CharThink(Entity *self){
-	if(self->active == 1){
-	/*If active, perform actions*/
-		if(self->bbox.y + self->bbox.h)
-		while(SDL_PollEvent(&Event)){
-			switch(Event.type){
-			case SDL_KEYDOWN:
-				switch(Event.key.keysym.sym){
-					case SDLK_LEFT:
-						self->vx = -4;
-						break;
-					case SDLK_RIGHT:
-						self->vx = 4;
-						break;
-				}
-				break;
-			case SDL_KEYUP:
-				switch(Event.key.keysym.sym){
-					case SDLK_LEFT:
-						self->vx = 0;
-						break;
-					case SDLK_RIGHT:
-						self->vx = 0;
-						break;
-					case SDLK_UP:
-						if(self->air == 0){
-							self->vy += 8;
-						}
-						break;
-					case SDLK_SPACE:
-						if(self->air == 0){
-							if(self->mode == M_RED){
-								blueChar->active = 1;
-							}else{
-								redChar->active = 1;
-							}
-							self->active = 0;
-						}
-						break;
-				}
-			}
-		}
-
+	int keyn;
+	Uint8 *keys;
+	SDL_PumpEvents();
+	keys = SDL_GetKeyState(&keyn);
+	if(keys[SDLK_RIGHT]){
+		self->x = self->x +2;
+		printf("%d",self->x);
+		self->sx += self->sx + 2;
+	}
+	if(self->x > 672 || self->x < -32 || self->y > 480){
+		ReloadLevel(curLvl);
 	}
 }
 
@@ -163,10 +136,10 @@ Entity *CreateBlock(int x, int y, Sprite *s, int m){
 	block->solid = 1;
 	block->sprite = s;
 	block->mode = m;
-	block->bbox.x = x;
-	block->bbox.y = y;
-	block->bbox.w = 32;
-	block->bbox.h = 32;
+	block->x = x;
+	block->y = y;
+	block->w = 32;
+	block->h = 32;
 	block->frame = 0;
 	return block;
 }
@@ -181,10 +154,10 @@ Entity *CreateOb(int x, int y, Sprite *s, int m){
 	obstacle->solid = 1;
 	obstacle->sprite = s;
 	obstacle->mode = m;
-	obstacle->bbox.x = x;
-	obstacle->bbox.y = y;
-	obstacle->bbox.w = 32;
-	obstacle->bbox.h = 32;
+	obstacle->x = x;
+	obstacle->y = y;
+	obstacle->w = 32;
+	obstacle->h = 16;
 	obstacle->frame = 0;
 	return obstacle;
 }
@@ -192,17 +165,17 @@ void ObThink(Entity *self){
 	/*check for collision between itself and a character*/
 }
 
-Entity *CreateGoal(int x, int y, Sprite *s, int m){
+Entity *CreateGoal(int x, int y){
 	Entity *goal;
 	goal = NewEnt();
 	if(goal == NULL) return goal;
 	goal->solid = 1;
-	goal->sprite = s;
-	goal->mode = m;
-	goal->bbox.x = x;
-	goal->bbox.y = y;
-	goal->bbox.w = 64;
-	goal->bbox.h = 32;
+	goal->sprite = LoadSprite("images/purpFinish.png",0,0);
+	goal->mode = M_PURP;
+	goal->x = x;
+	goal->y = y;
+	goal->w = 32;
+	goal->h = 32;
 	goal->frame = 0;
 	return goal;
 }
