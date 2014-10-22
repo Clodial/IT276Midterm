@@ -2,6 +2,8 @@
 #include "SDL.h"
 #include "SDL_image.h"
 #include "graphics.h"
+#include "level.h"
+#include "entity.h"
 
 extern SDL_Surface *screen;
 extern SDL_Surface *buffer; /*pointer to the draw buffer*/
@@ -14,18 +16,19 @@ void Init_All();
 /*notice the default arguments for main.  SDL expects main to look like that, so don't change it*/
 int main(int argc, char *argv[])
 {
+  SDL_Surface *temp;
   int done;
   int keyn;
+  int mx,my;
   Uint8 *keys;
   Init_All();
- 
+  temp = IMG_Load("images/blueBack.png");
   done = 0;
   do
   {
     ResetBuffer();
     DrawMouse();
     NextFrame();
-	//DrawLvl();
     SDL_PumpEvents();
     keys = SDL_GetKeyState(&keyn);
     if(keys[SDLK_ESCAPE])done = 1;
@@ -43,7 +46,7 @@ void CleanUpAll()
 void Init_All()
 {
   Init_Graphics();
-
+  //InitLvl();
   InitMouse();
   atexit(CleanUpAll);
 }
