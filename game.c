@@ -17,12 +17,17 @@ void Init_All();
 int main(int argc, char *argv[])
 {
   SDL_Surface *temp;
+  SDL_Surface *bg;
   int done;
   int keyn;
   int mx,my;
   Uint8 *keys;
   Init_All();
   temp = IMG_Load("images/blueBack.png");
+  if(temp != NULL){
+	bg = SDL_DisplayFormat(temp);
+  }
+  SDL_FreeSurface(temp);
   done = 0;
   do
   {
