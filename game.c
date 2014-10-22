@@ -10,7 +10,7 @@ extern SDL_Surface *buffer; /*pointer to the draw buffer*/
 extern SDL_Rect Camera;
 
 void Init_All();
-
+int col;
 
 /*this program must be run from the directory directly below images and src, not from within src*/
 /*notice the default arguments for main.  SDL expects main to look like that, so don't change it*/
@@ -21,22 +21,47 @@ int main(int argc, char *argv[])
   int done;
   int keyn;
   int mx,my;
+  int tCol;
   Uint8 *keys;
   Init_All();
-  temp = IMG_Load("images/blueBack.png");
+  col = 0;
+  temp = IMG_Load("images/redBack.png");
   if(temp != NULL){
 	bg = SDL_DisplayFormat(temp);
   }
   SDL_FreeSurface(temp);
+  if(bg != NULL){
+	SDL_BlitSurface(bg,NULL,buffer,NULL);
+  }
   done = 0;
   do
   {
     ResetBuffer();
-    DrawMouse();
     NextFrame();
     SDL_PumpEvents();
     keys = SDL_GetKeyState(&keyn);
-    if(keys[SDLK_ESCAPE])done = 1;
+	tCol = col;
+	if(keys[SDLK_SPACE]){
+		if(tCol == 1){
+			temp = IMG_Load("images/blueBack.png");
+			printf("blue");
+			tCol = 0;
+		}else{
+			temp = IMG_Load("images/redBack.png");
+			printf("red");
+			tCol = 1;
+		}
+		if(temp != NULL){
+			bg = SDL_DisplayFormat(temp);
+		}
+		SDL_FreeSurface(temp);
+		if(bg != NULL){
+			SDL_BlitSurface(bg,NULL,buffer,NULL);
+		}
+		SDL_Delay(120);
+	}
+	col = tCol;
+	if(keys[SDLK_ESCAPE])done = 1;
   }while(!done);
   exit(0);		/*technically this will end the program, but the compiler likes all functions that can return a value TO return a value*/
   return 0;
@@ -55,4 +80,3 @@ void Init_All()
   InitMouse();
   atexit(CleanUpAll);
 }
-
