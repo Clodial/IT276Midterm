@@ -18,6 +18,7 @@
 void InitLvl();
 void LoadLvl(int curLevel);
 void NextLevel(int curLevel);
+void BackLevel(int curLevel);
 void ReloadLevel(int curLevel);
 void ClearLvl();
 #endif

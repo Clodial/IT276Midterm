@@ -13,18 +13,11 @@ SDL_Event Event;
 
 Entity EntList[MAXENTITIES];
 int numEnts;
-SDL_Surface *screen;
-/*level stuff:*/
-
-/*
-extern int NumLevels;
-extern int CurrentLevel;
-*/
+extern SDL_Surface *screen;
+extern int curLvl;
 Entity *redChar;
 Entity *blueChar;
 int inAir;
-
-extern int curLvl;
 
 /*Main functions for initializing*/
 void InitEnt(){
@@ -44,7 +37,7 @@ Entity *NewEnt(){
 	numEnts++;
 	/*establish memory for new entity*/
 	for(i = 0;i <= numEnts; i++){
-		if(!EntList[i].used)break;
+		if(EntList[i].used == 0)break;
 	}
 	EntList[i].used = 1;
 	return &EntList[i];
@@ -59,7 +52,7 @@ void DrawEnts(){
 }
 void DrawEnt(Entity *ent){
 	/*Frame set to 0 for testing purposes*/
-	DrawSprite(ent->sprite,screen,ent->sx,ent->sy,0);
+	DrawSprite(ent->sprite,screen,ent->x,ent->y,0);
 }
 void UpdateEnt(){
 	int i;
@@ -78,7 +71,8 @@ void DestEnt(Entity *ent){
 	ent->used = 0;
 	numEnts--;
 	if(ent->sprite != NULL){
-			FreeSprite(ent->sprite);
+		printf("checked if sprite was here \n");
+		FreeSprite(ent->sprite);
 	}
 	ent->sprite = NULL;
 }
@@ -99,8 +93,6 @@ Entity *CreateChar(int x, int y, Sprite *s, int m){
 	player->mode = m;
 	player->x = x;
 	player->y = y;
-	player->sx = x;
-	player->sy = y;
 	player->w = 32;
 	player->h = 32;
 	player->think = CharThink;
@@ -117,15 +109,36 @@ Entity *CreateChar(int x, int y, Sprite *s, int m){
 void CharThink(Entity *self){
 	int keyn;
 	Uint8 *keys;
-	SDL_PumpEvents();
-	keys = SDL_GetKeyState(&keyn);
-	if(keys[SDLK_RIGHT]){
-		self->x = self->x +2;
-		printf("%d",self->x);
-		self->sx += self->sx + 2;
-	}
+	self->x += self->vx;
+	//printf("%d\n",self->x);
+	//printf("%d\n",self->sx);
+	//DrawEnt(self);
 	if(self->x > 672 || self->x < -32 || self->y > 480){
 		ReloadLevel(curLvl);
+	}
+	while(SDL_PollEvent(&Event)){
+		switch(Event.type){
+			case SDL_KEYDOWN:
+				switch(Event.key.keysym.sym){
+					case SDLK_RIGHT:
+						self->vx = 2;
+						//printf("%d\n",self->x);
+						//printf("%d\n",self->sx);
+						break;
+					default:
+						break;
+				}
+				break;
+			case SDL_KEYUP:
+				switch(Event.key.keysym.sym){
+					case SDLK_RIGHT:
+							self->vx = 0;
+							break;
+					default:
+						break;
+				}
+				break;
+		}
 	}
 }
 
@@ -133,6 +146,7 @@ Entity *CreateBlock(int x, int y, Sprite *s, int m){
 	Entity *block;
 	block = NewEnt();
 	if(block == NULL) return block;
+	block->used = 1;
 	block->solid = 1;
 	block->sprite = s;
 	block->mode = m;
@@ -151,6 +165,7 @@ Entity *CreateOb(int x, int y, Sprite *s, int m){
 	Entity *obstacle;
 	obstacle = NewEnt();
 	if(obstacle == NULL) return obstacle;
+	obstacle->used = 1;
 	obstacle->solid = 1;
 	obstacle->sprite = s;
 	obstacle->mode = m;
@@ -169,6 +184,7 @@ Entity *CreateGoal(int x, int y){
 	Entity *goal;
 	goal = NewEnt();
 	if(goal == NULL) return goal;
+	goal->used = 1;
 	goal->solid = 1;
 	goal->sprite = LoadSprite("images/purpFinish.png",0,0);
 	goal->mode = M_PURP;

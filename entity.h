@@ -13,7 +13,7 @@
 #include "SDL_keysym.h"
 #include "graphics.h"
 
-#define MAXENTITIES 511
+#define MAXENTITIES 150
 
 enum MODES{
 	M_RED, M_BLUE, M_PURP
@@ -21,7 +21,6 @@ enum MODES{
 
 typedef struct Ent_s{
 	Sprite			*sprite;
-	int				sx,sy;
 	int				x,y; /*Not using SDL_Rect since I don't need it*/
 	int				w,h;
 	int				vx,vy;

@@ -107,7 +107,6 @@ void Init_Graphics()
     SDL_EnableKeyRepeat(SDL_DEFAULT_REPEAT_DELAY,SDL_DEFAULT_REPEAT_INTERVAL);
 }
 
-
 void ResetBuffer()
 {
     SDL_BlitSurface(buffer,&Camera,screen,NULL);
@@ -117,7 +116,6 @@ void NextFrame()
 {
   Uint32 Then;
   SDL_BlitSurface(screen,NULL,videobuffer,NULL);/*copy everything we did to the video surface*/
-  SDL_BlitSurface(screen,NULL,videobuffer,NULL);
   SDL_Flip(videobuffer);							/*and then update the screen*/
   Then = NOW;									/*these next few lines  are used to show how long each frame takes to update.  */
   NOW = SDL_GetTicks();
@@ -282,7 +280,7 @@ void DrawSprite(Sprite *sprite,SDL_Surface *surface,int sx,int sy, int frame)
     dest.w = sprite->w;
     dest.h = sprite->h;
     SDL_BlitSurface(sprite->image, &src, surface, &dest);
-  
+	printf("%d\n",sx);
 }
 
 /*
