@@ -44,67 +44,25 @@ int main(int argc, char *argv[])
   do
   {
     ResetBuffer();
-	DrawEnts();
-	NextFrame();
-	UpdateEnt();
-	tCol = col; /*Change state of background*/
-	if(tCol == 0){
+	if(col == 0){
 		temp = IMG_Load("images/blueBack.png");
 	}else{
 		temp = IMG_Load("images/redBack.png");
 	}
+	if(temp != NULL){
+		bg = SDL_DisplayFormat(temp);
+	}
+	SDL_FreeSurface(temp);
+	if(bg != NULL){
+		SDL_BlitSurface(bg,NULL,buffer,NULL);
+	}
+	DrawEnts();
+	NextFrame();
+	UpdateEnt();
+	Input();
+	tCol = col; /*Change state of background*/
     SDL_PumpEvents();
 	keys = SDL_GetKeyState(&keyn);
-	
-	while(SDL_PollEvent(&Event)){
-		switch(Event.type){
-			/*case SDL_KEYDOWN:
-				switch(Event.key.keysym.sym){
-				
-				}
-				break;*/
-			case SDL_KEYUP:
-				switch(Event.key.keysym.sym){
-					case SDLK_SPACE:
-						//if(inAir == 0){
-							if(tCol == 0){
-								temp = IMG_Load("images/blueBack.png");
-								printf("blue");
-								tCol = 1;
-							}else{
-								temp = IMG_Load("images/redBack.png");
-								printf("red");
-								tCol = 0;
-							}
-							if(temp != NULL){
-								bg = SDL_DisplayFormat(temp);
-							}
-							SDL_FreeSurface(temp);
-							if(bg != NULL){
-								SDL_BlitSurface(bg,NULL,buffer,NULL);
-							}
-							SDL_Delay(200);
-						//}
-						break;
-					case SDLK_r:
-						printf("Pressed r \n");
-						ReloadLevel(curLvl);
-						SDL_Delay(200);
-						break;
-					case SDLK_n:
-						printf("Pressed n \n");
-						NextLevel(curLvl);
-						SDL_Delay(200);
-						break;
-					case SDLK_b:
-						printf("Pressed b \n");
-						BackLevel(curLvl);
-						SDL_Delay(200);
-						break;
-				}
-				break;
-		}
-	}
 	col = tCol;
 	if(keys[SDLK_ESCAPE])done = 1;
   }while(!done);

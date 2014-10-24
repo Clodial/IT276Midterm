@@ -9,12 +9,15 @@
 #include "SDL.h"
 #include "level.h"
 
+#define GRAVITY 1
+
 SDL_Event Event;
 
 Entity EntList[MAXENTITIES];
 int numEnts;
 extern SDL_Surface *screen;
 extern int curLvl;
+extern int col;
 Entity *redChar;
 Entity *blueChar;
 int inAir;
@@ -71,7 +74,6 @@ void DestEnt(Entity *ent){
 	ent->used = 0;
 	numEnts--;
 	if(ent->sprite != NULL){
-		printf("checked if sprite was here \n");
 		FreeSprite(ent->sprite);
 	}
 	ent->sprite = NULL;
@@ -107,39 +109,11 @@ Entity *CreateChar(int x, int y, Sprite *s, int m){
 	return player;
 }
 void CharThink(Entity *self){
-	int keyn;
-	Uint8 *keys;
-	self->x += self->vx;
-	//printf("%d\n",self->x);
-	//printf("%d\n",self->sx);
-	//DrawEnt(self);
+	self->x += (int)self->vx;
 	if(self->x > 672 || self->x < -32 || self->y > 480){
+		SDL_Delay(2000);
 		ReloadLevel(curLvl);
-	}
-	while(SDL_PollEvent(&Event)){
-		switch(Event.type){
-			case SDL_KEYDOWN:
-				switch(Event.key.keysym.sym){
-					case SDLK_RIGHT:
-						self->vx = 2;
-						//printf("%d\n",self->x);
-						//printf("%d\n",self->sx);
-						break;
-					default:
-						break;
-				}
-				break;
-			case SDL_KEYUP:
-				switch(Event.key.keysym.sym){
-					case SDLK_RIGHT:
-							self->vx = 0;
-							break;
-					default:
-						break;
-				}
-				break;
-		}
-	}
+	}//Meant to reload level upon defeat
 }
 
 Entity *CreateBlock(int x, int y, Sprite *s, int m){
@@ -201,4 +175,48 @@ void GoalThink(Entity *self){
 
 void jump(Entity *character){
 
+}
+
+void Input(){
+	while(SDL_PollEvent(&Event)){
+		switch(Event.type){
+			case SDL_KEYDOWN:
+				switch(Event.key.keysym.sym){
+					case SDLK_RIGHT:
+						if(col == 1){
+							if(redChar->vx == 0){
+								redChar->vx = 4.0f;
+							}
+						}else{
+							blueChar->vx = 4.0f;
+						}
+						break;
+					case SDLK_LEFT:
+						if(col == 1){
+							redChar->vx = -4.0f;
+						}else{
+							blueChar->vx = -4.0f;
+						}
+						break;
+				}
+				break;
+			case SDL_KEYUP:
+				switch(Event.key.keysym.sym){
+					case SDLK_RIGHT:
+						redChar->vx = 0;
+						blueChar->vx = 0;
+						break;
+					case SDLK_LEFT:
+						if(blueChar->vx != 0 || redChar->vx != 0){
+							blueChar->vx = 0;
+							redChar->vx = 0;
+						}
+						break;
+					case SDLK_SPACE:
+						if(col == 0){col = 1;}
+						else{ col = 0;}
+				}
+				break;
+		}
+	}
 }

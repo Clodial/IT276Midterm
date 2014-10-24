@@ -23,13 +23,14 @@ typedef struct Ent_s{
 	Sprite			*sprite;
 	int				x,y; /*Not using SDL_Rect since I don't need it*/
 	int				w,h;
-	int				vx,vy;
+	float			vx,vy;
 	int				mode; /*determines what form the world is in*/
 	int				active;
 	int				used;
 	int				frame;
 	int				solid;
 	int				air;
+	int				killer;
 	void			(*think)(struct Ent_s *self);
 }Entity;
 
@@ -56,4 +57,6 @@ void	ObThink(Entity *self);
 /*Level Ender*/
 Entity	*CreateGoal(int x, int y);
 void	GoalThink(Entity *self);
+
+void Input();
 #endif
