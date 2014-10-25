@@ -158,11 +158,20 @@ Entity *CreateOb(int x, int y, Sprite *s, int m){
 	obstacle->y = y;
 	obstacle->w = 32;
 	obstacle->h = 16;
+	obstacle->think = ObThink;
 	obstacle->frame = 0;
 	return obstacle;
 }
 void ObThink(Entity *self){
 	/*check for collision between itself and a character*/
+	if(BoxCollide(self,blueChar) == 1){
+		SDL_Delay(200);
+		ReloadLevel(curLvl);
+	}
+	if(BoxCollide(self, redChar) == 1){
+		SDL_Delay(200);
+		ReloadLevel(curLvl);
+	}
 }
 
 Entity *CreateGoal(int x, int y){
@@ -258,10 +267,18 @@ void Input(){
 
 //function to check if place moving to is free
 int PlaceFree(Entity *ent, int vx, int vy){
+	int i, j;
+
 	return 0;
 }
 
 //Function to check if the current character will collide with the other character
 int OtherPlayer(Entity *self, Entity *tar, int vx, int vy){
 	return 0;
+}
+int BoxCollide(Entity *self, Entity *targ){
+    if( self->x+self->w < targ->x || self->x > targ->x+targ->w ) return 0;
+    if( self->y+self->h < targ->y || self->y > targ->y+targ->h ) return 0;
+
+	return 1;
 }
