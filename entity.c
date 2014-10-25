@@ -18,6 +18,7 @@ int numEnts;
 extern SDL_Surface *screen;
 extern int curLvl;
 extern int col;
+extern int *maps[TILEY][TILEX];
 Entity *redChar;
 Entity *blueChar;
 int inAir;
@@ -95,6 +96,7 @@ Entity *CreateChar(int x, int y, Sprite *s, int m){
 	player->mode = m;
 	player->x = x;
 	player->y = y;
+	player->vy = 0.0f;
 	player->w = 32;
 	player->h = 32;
 	player->think = CharThink;
@@ -109,7 +111,16 @@ Entity *CreateChar(int x, int y, Sprite *s, int m){
 	return player;
 }
 void CharThink(Entity *self){
-	self->x += (int)self->vx;
+	if(self->active){
+		self->y = self->y - (int)self->vy;
+	}
+	if(self->active == 1 && self->air == 1){
+		if(self->vy < MAX_FALL){
+			self->vy = self->vy - GRAVITY; 
+		}else{
+			self->vy = MAX_FALL;
+		}
+	}
 	if(self->x > 672 || self->x < -32 || self->y > 480){
 		SDL_Delay(2000);
 		ReloadLevel(curLvl);
@@ -178,45 +189,56 @@ void jump(Entity *character){
 }
 
 void Input(){
+	int keyn;
+	Uint8 *keys;
+
 	while(SDL_PollEvent(&Event)){
 		switch(Event.type){
-			case SDL_KEYDOWN:
-				switch(Event.key.keysym.sym){
-					case SDLK_RIGHT:
-						if(col == 1){
-							if(redChar->vx == 0){
-								redChar->vx = 4.0f;
-							}
-						}else{
-							blueChar->vx = 4.0f;
-						}
-						break;
-					case SDLK_LEFT:
-						if(col == 1){
-							redChar->vx = -4.0f;
-						}else{
-							blueChar->vx = -4.0f;
-						}
-						break;
-				}
-				break;
 			case SDL_KEYUP:
 				switch(Event.key.keysym.sym){
-					case SDLK_RIGHT:
-						redChar->vx = 0;
-						blueChar->vx = 0;
-						break;
-					case SDLK_LEFT:
-						if(blueChar->vx != 0 || redChar->vx != 0){
-							blueChar->vx = 0;
-							redChar->vx = 0;
-						}
-						break;
 					case SDLK_SPACE:
-						if(col == 0){col = 1;}
-						else{ col = 0;}
+						if(blueChar->air == 0 && redChar->air == 0){
+							if(col == 0){col = 1;}
+							else{ col = 0;}
+						}
 				}
 				break;
 		}
 	}
+	SDL_PumpEvents();
+	keys = SDL_GetKeyState(&keyn);
+	if(keys[SDLK_RIGHT]){
+		if(col == 1){
+			if(PlaceFree(redChar,VX,0) == 0){
+				redChar->x += (int)VX;
+			}
+		}
+		else{
+			if(PlaceFree(blueChar,VX,0) == 0){
+				blueChar->x +=(int) VX;
+			}
+		}
+	}
+	if(keys[SDLK_LEFT]){
+		if(col == 1){
+			if(PlaceFree(redChar, (-VX - 32),0) == 0){
+				redChar->x -= (int)VX;
+			}
+		}
+		else{
+			if(PlaceFree(blueChar,(-VX - 32),0) == 0){
+				blueChar->x -= (int) VX;
+			}
+		}
+	}
+}
+//function to check if place moving to is free
+//
+int PlaceFree(Entity *ent, int vx, int vy){
+	return 0;
+}
+
+//Function to check if the current character is colliding with the other character
+int OtherPlayer(Entity *self, Entity *tar, int vx, int vy){
+	return 0;
 }

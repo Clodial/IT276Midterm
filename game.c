@@ -64,6 +64,9 @@ int main(int argc, char *argv[])
     SDL_PumpEvents();
 	keys = SDL_GetKeyState(&keyn);
 	col = tCol;
+	if(keys[SDLK_r]){
+		ReloadLevel(1);
+	}
 	if(keys[SDLK_ESCAPE])done = 1;
   }while(!done);
   exit(0);		/*technically this will end the program, but the compiler likes all functions that can return a value TO return a value*/

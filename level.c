@@ -12,6 +12,7 @@ extern SDL_Rect camera;
 extern SDL_Surface *buffer;
 extern int col;
 extern Entity EntList[MAXENTITIES];
+int *maps[TILEY][TILEX];
 int i,j;
 int curLvl;
 	/*******
@@ -97,7 +98,6 @@ void LoadLvl(int curLevel){
 	SDL_Rect chBox;
 	Sprite *sprite;
 	Entity *ent;
-	int maps[TILEY][TILEX];
 
 	chBox.h = 32;
 	chBox.w = 32;
@@ -125,6 +125,7 @@ void LoadLvl(int curLevel){
 	*
 	*******/
 	for(i = 0; i < TILEY; i++){
+		printf("%d\n",i*32);
 		for(j = 0; j < TILEX; j++){
 			if(maps[i][j] == 1){
 				sprite = LoadSprite("images/redPlay.png",32,32);
@@ -132,7 +133,6 @@ void LoadLvl(int curLevel){
 				//DrawSprite(ent->sprite,buffer,ent->x,ent->y,0);
 			}else if(maps[i][j] == 2){
 				sprite = LoadSprite("images/bluePlay.png",32,32);
-				printf("initial: %x\n",sprite);
 				ent = CreateChar(j*32,i*32,sprite,M_BLUE);
 				//DrawSprite(ent->sprite,buffer,ent->x,ent->y,0);
 			}else if(maps[i][j] == 3){
@@ -190,5 +190,7 @@ void ReloadLevel(int curLevel){
 //Clear out all assets in the level (Mostly for when reloading a level
 //or going to the next level)
 void ClearLvl(){
+	printf("clear sprites\n");
 	ClearAllEnt();
+	printf("finished last function\n");
 }
