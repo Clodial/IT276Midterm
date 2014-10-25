@@ -15,9 +15,9 @@
 
 #define MAXENTITIES 150
 #define VX 4.0f 
-#define GRAVITY 0.8f
+#define GRAVITY 1.0f
 #define MAX_FALL 12.0f
-#define VY 12.0f
+#define VY -12.0f
 
 enum MODES{
 	M_RED, M_BLUE, M_PURP
