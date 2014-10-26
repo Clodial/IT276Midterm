@@ -241,24 +241,24 @@ void Input(){
 	}
 	if(keys[SDLK_RIGHT]){
 		if(col == 1){
-			if(PlaceFree(redChar,VX,0) == 0){
+			if(PlaceFree(redChar,redChar->x+redChar->w,redChar->y) == 1){
 				redChar->x += (int)VX;
 			}
 		}
 		else{
-			if(PlaceFree(blueChar,VX,0) == 0){
+			if(PlaceFree(blueChar,blueChar->x+blueChar->w,blueChar->y) == 1){
 				blueChar->x += (int)VX;
 			}
 		}
 	}
 	if(keys[SDLK_LEFT]){
 		if(col == 1){
-			if(PlaceFree(redChar, (-VX - 32),0) == 0){
+			if(PlaceFree(redChar, (redChar->x),redChar->y) == 1){
 				redChar->x -= (int)VX;
 			}
 		}
 		else{
-			if(PlaceFree(blueChar,(-VX - 32),0) == 0){
+			if(PlaceFree(blueChar,(blueChar->x),blueChar->y) == 1){
 				blueChar->x -= (int)VX;
 			}
 		}
@@ -266,10 +266,25 @@ void Input(){
 }
 
 //function to check if place moving to is free
-int PlaceFree(Entity *ent, int vx, int vy){
-	int i, j;
-
-	return 0;
+int PlaceFree(Entity *ent, int x, int y){
+	int cx,cy;
+	int cx2,cy2; //in case the destination is an exact position
+	cx = x / 32; //get the tile that is there
+	cy = y / 32;
+	cx2 = x % 32;
+	cy2 = y % 32;
+	printf("%d\n",cx2);
+	printf("%d\n",cy2);
+	if(ent->mode == M_RED){
+		if((maps[cy][cx] == 8 || maps[cy][cx] == 4 || maps[cy][cx] == 3) && (cx2 == 0 && cy2 == 0)){
+			return 0; // basically saying that the tile desired is not free
+		}
+	}else{
+		if((maps[cy][cx] == 8 || maps[cy][cx] == 5 || maps[cy][cx] == 3) && (cx2 == 0 && cy2 == 0)){
+			return 0; // basically saying that the tile desired is not free
+		}
+	}
+	return 1;
 }
 
 //Function to check if the current character will collide with the other character
@@ -279,6 +294,5 @@ int OtherPlayer(Entity *self, Entity *tar, int vx, int vy){
 int BoxCollide(Entity *self, Entity *targ){
     if( self->x+self->w < targ->x || self->x > targ->x+targ->w ) return 0;
     if( self->y+self->h < targ->y || self->y > targ->y+targ->h ) return 0;
-
 	return 1;
 }
