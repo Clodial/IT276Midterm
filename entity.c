@@ -143,6 +143,7 @@ void CharThink(Entity *self){
 		self->y += (int)self->vy;
 	}else{
 		self->vy = 0;
+		self->y = 32*(self->y/32);
 		self->air = 0;
 	}
 	if(self == redChar){
@@ -181,20 +182,18 @@ Entity *CreateBlock(int x, int y, Sprite *s, int m){
 }
 void BlockThink(Entity *self){
 	/*fix up those nasty collision problems*/
-	if(BoxCollide(self,redChar) == 1 && (self->mode == M_PURP || self->mode == M_RED)){
-		if(redChar->y < self->y)
-		redChar->y = self->y - 32;
-		//LvlredF = 1;
-	}else{LvlredF = 0;}
-	if(BoxCollide(self,blueChar) == 1 && (self->mode == M_PURP || self->mode == M_BLUE)){
-		if(blueChar->y < self->y)
-		blueChar->y = self->y - 32;
-		//LvlblueF = 1;
-	}else{LvlblueF = 1;}
+	//if(BoxCollide(self,redChar) == 1 && (self->mode == M_PURP || self->mode == M_RED)){
+	//	if(redChar->y < self->y)
+	//	redChar->y = self->y - 32;
+	//	//LvlredF = 1;
+	//}
+	//if(BoxCollide(self,blueChar) == 1 && (self->mode == M_PURP || self->mode == M_BLUE)){
+	//	if(blueChar->y < self->y)
+	//	blueChar->y = self->y - 32;
+	//	//LvlblueF = 1;
+	//}
 
-	if(LvlblueF == 1 && LvlredF == 1){
-		forw = 1;
-	}
+	
 }
 
 Entity *CreateOb(int x, int y, Sprite *s, int m){
@@ -331,6 +330,7 @@ void Input(){
 int PlaceFree(Entity *ent, int x, int y){
 	int cx,cy; 
 	int cx2,cy2; //to check the full length
+
 	cx = x / 32; //get the tile that is there
 	cy = y / 32;
 	cx2 = (x + 31)/32;
@@ -357,11 +357,6 @@ int OtherPlayer(Entity *self, Entity *targ, int vx, int vy){
 
 int BoxCollide(Entity *self, Entity *targ){
     if( self->x+self->w < targ->x || self->x > targ->x+targ->w ) return 0;
-    if( self->y+self->h < targ->y || self->y > targ->y+targ->h ) return 0;
-	return 1;
-}
-int BoxCollideRect(SDL_Rect *self, Entity *targ){
-	if( self->x+self->w < targ->x || self->x > targ->x+targ->w ) return 0;
     if( self->y+self->h < targ->y || self->y > targ->y+targ->h ) return 0;
 	return 1;
 }
