@@ -87,7 +87,10 @@ void DestEnt(Entity *ent){
 void ClearAllEnt(){
 	int i;
 	for(i = 0;i < MAXENTITIES; i++){
-		DestEnt(&EntList[i]);
+		if(EntList[i].used != 0){ //I HATE THIS LINE OF CODE, BLAAAAAGH, COULD HAVE HANDED THIS GAME IN A LOT EARLIER IF I FIGURED THIS LINE OUT
+								  // -.- Well, this happened regardless... uhm... yeah... let's make sure I'm not deleting images that were never there
+			DestEnt(&EntList[i]);
+		}
 	}
 }
 
@@ -117,7 +120,6 @@ Entity *CreateChar(int x, int y, Sprite *s, int m){
 }
 void CharThink(Entity *self){
 	Entity *targ;
-	printf("blue air test: %d\n",blueChar->air);
 	if(self == redChar){
 		targ = blueChar;
 	}else{
@@ -131,7 +133,7 @@ void CharThink(Entity *self){
 			self->vy = MAX_FALL;
 		}
 		if(self->vy < 0.0){//Allow the player to go in the air
-			if(PlaceFree(self,self->x,self->y+(int)self->vy) == 0 && OtherPlayer(self,targ,self->x,self->y+(int)self->vy) == 0){
+			if(self->vy > 0.0f && PlaceFree(self,self->x,self->y+(int)self->vy) == 0 && OtherPlayer(self,targ,self->x,self->y+(int)self->vy) == 0){
 				self->vy = 0.0f; //stop character from colliding into block
 			}
 			self->y += (int)self->vy;

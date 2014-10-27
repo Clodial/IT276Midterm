@@ -16,6 +16,7 @@ extern int curLvl;
 extern int rep;
 extern int forw;
 extern int backw;
+extern int numEnts;
 
 SDL_Event Event;
 /*this program must be run from the directory directly below images and src, not from within src*/
@@ -27,6 +28,8 @@ int main(int argc, char *argv[])
   int done;
   int keyn;
   int tCol;
+  int i;
+  int ci;
   Uint8 *keys;
 
   Init_Graphics();
@@ -42,6 +45,7 @@ int main(int argc, char *argv[])
   }
   done = 0;
   Init_All();
+  printf("number of entities: %d\n",numEnts);
   do
   {
     ResetBuffer();
@@ -62,17 +66,15 @@ int main(int argc, char *argv[])
 	if(rep == 1){
 		//ClearLevel();
 		ClearAllEnt();
-		LoadLvl(1);
+		LoadLvl(0);
 		rep = 0;
 	}
 	if(forw == 1){
 	}
 	if(backw == 1){
 	}
-
 	DrawEnts();
 	NextFrame();
-	printf("current level: %d\n", curLvl);
 	UpdateEnt();
 	Input();
 	tCol = col; /*Change state of background*/
