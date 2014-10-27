@@ -50,6 +50,7 @@ int main(int argc, char *argv[])
   do
   {
     ResetBuffer();
+	//level sprite changing things
 	if(col == 0){
 		temp = IMG_Load("images/blueBack.png");
 	}else{
@@ -62,8 +63,9 @@ int main(int argc, char *argv[])
 	if(bg != NULL){
 		SDL_BlitSurface(bg,NULL,buffer,NULL);
 	}
-
-	//level sprite changing things
+	DrawEnts();
+	NextFrame();
+	UpdateEnt();
 	if(rep == 1){
 		//ClearLevel();
 		ClearAllEnt();
@@ -80,11 +82,6 @@ int main(int argc, char *argv[])
 		}
 		LoadLvl(curLvl);
 	}
-	if(backw == 1){
-	}
-	DrawEnts();
-	NextFrame();
-	UpdateEnt();
 	Input();
 	tCol = col; /*Change state of background*/
     SDL_PumpEvents();

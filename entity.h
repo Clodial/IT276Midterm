@@ -63,4 +63,5 @@ Entity	*CreateGoal(int x, int y);
 void	GoalThink(Entity *self);
 
 void Input();
+
 #endif

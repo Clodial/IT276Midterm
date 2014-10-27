@@ -135,7 +135,7 @@ void CharThink(Entity *self){
 		self->vy = MAX_FALL;
 	}
 	if(self->vy < 0.0){//Allow the player to go in the air
-		if(self->vy > 0.0f && PlaceFree(self,self->x,self->y+(int)self->vy) == 0 && OtherPlayer(self,targ,self->x,self->y+(int)self->vy) == 0){
+		if(PlaceFree(self,self->x,self->y+(int)self->vy) == 0 && OtherPlayer(self,targ,self->x,self->y+(int)self->vy) == 0){
 			self->vy = 0.0f; //stop character from colliding into block
 		}
 		self->y += (int)self->vy;
@@ -144,6 +144,11 @@ void CharThink(Entity *self){
 	}else{
 		self->vy = 0;
 		self->air = 0;
+	}
+	if(self == redChar){
+		printf("redChar active level -> %d\n", redChar->active);
+	}else{
+		printf("blueChar active level -> %d\n",blueChar->active);
 	}
 	//self->y = self->y + (int)self->vy;
 	if(self->active == 0){
@@ -228,14 +233,13 @@ Entity *CreateGoal(int x, int y){
 	goal->mode = M_PURP;
 	goal->x = x;
 	goal->y = y;
-	goal->w = 32;
+	goal->w = 64;
 	goal->h = 32;
 	goal->think = GoalThink;
 	goal->frame = 0;
 	return goal;
 }
 void GoalThink(Entity *self){
-	printf("redPlayer: %d\n",LvlredF);
 	/*Check if redChar and blueChar are ontop of it*/
 	if(BoxCollide(self,redChar) == 1){
 		if(redChar->y < self->y)
@@ -265,7 +269,6 @@ void Input(){
 			case SDL_KEYUP:
 				switch(Event.key.keysym.sym){
 					case SDLK_SPACE:
-						printf("pressed space \n");
 						if(blueChar->air == 0 && redChar->air == 0){
 							if(col == 0){
 								redChar->active = 1;
@@ -285,7 +288,7 @@ void Input(){
 	}
 	SDL_PumpEvents();
 	keys = SDL_GetKeyState(&keyn);
-	if(keys[SDLK_UP] && BoxCollide(redChar,blueChar) == 0){
+	if(keys[SDLK_UP]/* && BoxCollide(redChar,blueChar) == 0*/){
 		if(col == 1){
 			if(redChar->air == 0){
 				redChar->air = 1;
@@ -351,14 +354,14 @@ int OtherPlayer(Entity *self, Entity *targ, int vx, int vy){
     if( self->y+vy < targ->y || self->y+vy > targ->y+targ->h ) return 0;
 	return 1;
 }
-int PlayerOverhead(Entity *self, Entity *targ, int vy){
-	int cy;
-	cy = 4;
-	return 1;
-}
 
 int BoxCollide(Entity *self, Entity *targ){
     if( self->x+self->w < targ->x || self->x > targ->x+targ->w ) return 0;
+    if( self->y+self->h < targ->y || self->y > targ->y+targ->h ) return 0;
+	return 1;
+}
+int BoxCollideRect(SDL_Rect *self, Entity *targ){
+	if( self->x+self->w < targ->x || self->x > targ->x+targ->w ) return 0;
     if( self->y+self->h < targ->y || self->y > targ->y+targ->h ) return 0;
 	return 1;
 }
