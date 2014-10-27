@@ -60,7 +60,7 @@ int main(int argc, char *argv[])
 
 	//level sprite changing things
 	if(rep == 1){
-		//ClearAllEnt();
+		ClearLevel();
 		LoadLvl(1);
 		rep = 0;
 	}

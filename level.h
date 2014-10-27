@@ -19,4 +19,5 @@ void CreateLevelList();
 void CreateLevel(int *lvl[TILEY][TILEX]);
 void InitLvl();
 void LoadLvl(int c);
+void ClearLevel();
 #endif

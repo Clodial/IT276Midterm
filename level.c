@@ -11,7 +11,9 @@
 extern SDL_Rect camera;
 extern SDL_Surface *buffer;
 extern int col;
-extern Entity EntList[MAXENTITIES];
+extern Entity *EntList[MAXENTITIES];
+extern Entity *redChar;
+extern Entity *blueChar;
 int LvlredF;
 int LvlblueF;
 int *maps[TILEY][TILEX];
@@ -35,7 +37,7 @@ int rep;
 	*
 	*******/
 
-int tile1[TILEY][TILEX] ={
+int *tile1[TILEY][TILEX] ={
 
 		/*Level 1*/
 
@@ -56,7 +58,7 @@ int tile1[TILEY][TILEX] ={
 	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
 
 };
-int tile2[TILEY][TILEX] = {
+int *tile2[TILEY][TILEX] = {
 
 		/*Level 2*/
 
@@ -77,7 +79,7 @@ int tile2[TILEY][TILEX] = {
 	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
 
 };
-int tile3[TILEY][TILEX]={
+int *tile3[TILEY][TILEX]={
 
 		/*Level 3*/
 
@@ -179,12 +181,22 @@ void LoadLvl(int curLevel){
 		}
 	}
 }
-void ClearLevel(int l){
+void ClearLevel(){
 	int i,j;
-
+	int l,p;
 	for(i = 0; i < TILEY; i++){
 		for(j = 0; j < TILEX; j++){
-			
+			if(maps[i][j] >= 3){
+				for(l = 0; l < MAXENTITIES; l++){
+					if(EntList[l]->x == j*32 && EntList[l]->y == i*32){
+						DestEnt(EntList[l]);
+					}
+				}
+			}else if(maps[i][j] == 1){
+				DestEnt(redChar);
+			}else if(maps[i][j] == 2){
+				DestEnt(blueChar);
+			}
 		}
 	}
 }
