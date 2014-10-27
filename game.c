@@ -18,6 +18,8 @@ extern int forw;
 extern int backw;
 extern int numEnts;
 
+extern Entity *redChar;//I need to take off their pointers upon reload
+extern Entity *blueChar;
 SDL_Event Event;
 /*this program must be run from the directory directly below images and src, not from within src*/
 /*notice the default arguments for main.  SDL expects main to look like that, so don't change it*/
@@ -45,7 +47,6 @@ int main(int argc, char *argv[])
   }
   done = 0;
   Init_All();
-  printf("number of entities: %d\n",numEnts);
   do
   {
     ResetBuffer();
@@ -66,8 +67,9 @@ int main(int argc, char *argv[])
 	if(rep == 1){
 		//ClearLevel();
 		ClearAllEnt();
+		redChar = NULL; //SO THAT GRAVITY CAN WORK ON THEM
+		blueChar = NULL;
 		LoadLvl(0);
-		rep = 0;
 	}
 	if(forw == 1){
 	}

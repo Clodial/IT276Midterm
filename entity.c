@@ -116,8 +116,10 @@ Entity *CreateChar(int x, int y, Sprite *s, int m){
 		player->active = 1;
 		redChar = player;
 	}
+	printf("created player\n");
 	return player;
 }
+
 void CharThink(Entity *self){
 	Entity *targ;
 	if(self == redChar){
@@ -127,6 +129,7 @@ void CharThink(Entity *self){
 	}
 	//check if player is in the air
 	if(self->active == 1){
+		printf("PLAYER IS ACTIVE AND SHOULD BE FALLING\n");
 		if(self->vy < MAX_FALL){
 			self->vy = self->vy + GRAVITY; 
 		}else{
@@ -208,10 +211,10 @@ Entity *CreateOb(int x, int y, Sprite *s, int m){
 }
 void ObThink(Entity *self){
 	/*check for collision between itself and a character*/
-	if(BoxCollide(self,blueChar) == 1){
+	if(BoxCollide(self,blueChar) == 1 && self->mode == M_BLUE){
 		rep = 1;
 	}
-	if(BoxCollide(self, redChar) == 1){
+	if(BoxCollide(self, redChar) == 1 && self->mode == M_RED){
 		rep = 1;
 	}
 }
@@ -253,6 +256,7 @@ void Input(){
 			case SDL_KEYUP:
 				switch(Event.key.keysym.sym){
 					case SDLK_SPACE:
+						printf("pressed space \n");
 						if(blueChar->air == 0 && redChar->air == 0){
 							if(col == 0){
 								redChar->active = 1;
