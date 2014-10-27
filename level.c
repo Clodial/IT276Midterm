@@ -181,22 +181,3 @@ void LoadLvl(int curLevel){
 		}
 	}
 }
-void ClearLevel(){
-	int i,j;
-	int l,p;
-	for(i = 0; i < TILEY; i++){
-		for(j = 0; j < TILEX; j++){
-			if(maps[i][j] >= 3){
-				for(l = 0; l < MAXENTITIES; l++){
-					if(EntList[l]->x == j*32 && EntList[l]->y == i*32){
-						DestEnt(EntList[l]);
-					}
-				}
-			}else if(maps[i][j] == 1){
-				DestEnt(redChar);
-			}else if(maps[i][j] == 2){
-				DestEnt(blueChar);
-			}
-		}
-	}
-}
