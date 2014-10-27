@@ -14,7 +14,7 @@
 #include "graphics.h"
 
 #define MAXENTITIES 150
-#define VX 4.0f 
+#define VX 4.0f
 #define GRAVITY 1.0f
 #define MAX_FALL 12.0f
 #define VY -12.0f

@@ -12,9 +12,14 @@ extern SDL_Rect camera;
 extern SDL_Surface *buffer;
 extern int col;
 extern Entity EntList[MAXENTITIES];
+int LvlredF;
+int LvlblueF;
 int *maps[TILEY][TILEX];
 int i,j;
 int curLvl;
+int backw;
+int forw;
+int rep;
 
 	/*******
 	*
@@ -30,7 +35,7 @@ int curLvl;
 	*
 	*******/
 
-int lvl1[TILEY][TILEX] ={
+int tile1[TILEY][TILEX] ={
 
 		/*Level 1*/
 
@@ -42,29 +47,29 @@ int lvl1[TILEY][TILEX] ={
 	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 	{0,0,0,0,0,0,0,0,0,1,0,0,7,0,0,0,0,0,0,0},
 	{0,0,0,0,2,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,3,3,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+	{0,0,0,0,3,3,3,3,3,0,0,0,0,0,0,0,0,0,0,0},
 	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8,8,0,0},
 	{0,0,0,0,4,4,3,3,5,5,3,3,3,3,3,3,0,0,0,0},
 	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
 
 };
-int lvl2[TILEY][TILEX] = {
+int tile2[TILEY][TILEX] = {
 
 		/*Level 2*/
 
 	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+	{0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0},
 	{0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0,0,0},
 	{0,0,0,0,0,0,0,4,0,0,0,0,0,0,0,0,0,0,0,0},
 	{0,0,0,0,0,0,5,0,2,0,0,0,0,0,0,0,0,0,0,0},
 	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+	{0,0,0,0,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0,0},
 	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -72,7 +77,7 @@ int lvl2[TILEY][TILEX] = {
 	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
 
 };
-int lvl3[TILEY][TILEX]={
+int tile3[TILEY][TILEX]={
 
 		/*Level 3*/
 
@@ -86,40 +91,41 @@ int lvl3[TILEY][TILEX]={
 	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+	{0,0,0,0,0,1,0,0,0,0,4,3,3,3,0,0,0,0,0,0},
 	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0}
 
 };
-
-
-
 //establish what is the first level while loading said level
 void InitLvl(){
-	curLvl = 1; /*Set the current level*/
+	curLvl = 0; /*Set the current level*/
 	LoadLvl(curLvl);
 }
 
 //Load level and spawn elements in the level
 //Basically the most important function here
 void LoadLvl(int curLevel){
-	int num;
 	SDL_Rect chBox;
 	Sprite *sprite;
 	Entity *ent;
 
+	rep = 0; // make sure the level doesn't keep repeating itself
+
 	chBox.h = 32;
 	chBox.w = 32;
 
-	if(curLevel == 1){
-		memcpy(maps,lvl1,sizeof(lvl1));
+	if(curLevel == 0){
+		memcpy(maps,*tile1,sizeof(tile1));
+	}else if(curLevel == 1){
+		memcpy(maps,*tile2,sizeof(tile2));
 	}else if(curLevel == 2){
-		memcpy(maps,lvl2,sizeof(lvl2));
-	}else if(curLevel ==3){
-		memcpy(maps,lvl3,sizeof(lvl3));
+		memcpy(maps,*tile3,sizeof(tile3));
+	}else{
+		memcpy(maps,*tile1,sizeof(tile1));
 	}
+
 	col = 1; /*Dye the level red*/
 	//Leave some room for extra levels
 	/*******
@@ -136,7 +142,6 @@ void LoadLvl(int curLevel){
 	*
 	*******/
 	for(i = 0; i < TILEY; i++){
-		printf("%d\n",i*32);
 		for(j = 0; j < TILEX; j++){
 			if(maps[i][j] == 1){
 				sprite = LoadSprite("images/redPlay.png",32,32);
@@ -174,34 +179,12 @@ void LoadLvl(int curLevel){
 		}
 	}
 }
+void ClearLevel(int l){
+	int i,j;
 
-//Use if both player characters over goal
-void NextLevel(int curLevel){
-	if(curLvl < 3){
-		curLvl++;
-		ClearLvl();
-		LoadLvl(curLevel);
+	for(i = 0; i < TILEY; i++){
+		for(j = 0; j < TILEX; j++){
+			
+		}
 	}
-}
-
-//
-void BackLevel(int curLevel){
-	if(curLvl > 1){
-		ClearLvl();
-		curLvl--;
-		LoadLvl(curLevel);
-	}
-}
-//Use if player presses R or click a reload option
-void ReloadLevel(int curLevel){
-	ClearLvl();
-	LoadLvl(curLevel);
-}
-
-//Clear out all assets in the level (Mostly for when reloading a level
-//or going to the next level)
-void ClearLvl(){
-	printf("clear sprites\n");
-	ClearAllEnt();
-	printf("finished last function\n");
 }

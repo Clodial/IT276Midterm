@@ -11,14 +11,12 @@
 #define TILEW 32
 #define TILEX 20
 #define TILEY 15
+#define MAXLEVELS 3
 
 #include "SDL.h"
 
-
+void CreateLevelList();
+void CreateLevel(int *lvl[TILEY][TILEX]);
 void InitLvl();
-void LoadLvl(int curLevel);
-void NextLevel(int curLevel);
-void BackLevel(int curLevel);
-void ReloadLevel(int curLevel);
-void ClearLvl();
+void LoadLvl(int c);
 #endif

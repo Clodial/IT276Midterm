@@ -13,6 +13,9 @@ void Init_All();
 extern int col; /*Change state of the level*/
 extern int inAir; /*This is to make sure that a player can change the background all willy nilly*/
 extern int curLvl;
+extern int rep;
+extern int forw;
+extern int backw;
 
 SDL_Event Event;
 /*this program must be run from the directory directly below images and src, not from within src*/
@@ -23,10 +26,8 @@ int main(int argc, char *argv[])
   SDL_Surface *bg;
   int done;
   int keyn;
-  int mx,my;
   int tCol;
   Uint8 *keys;
-
 
   Init_Graphics();
   col = 0;
@@ -56,8 +57,21 @@ int main(int argc, char *argv[])
 	if(bg != NULL){
 		SDL_BlitSurface(bg,NULL,buffer,NULL);
 	}
+
+	//level sprite changing things
+	if(rep == 1){
+		//ClearAllEnt();
+		LoadLvl(1);
+		rep = 0;
+	}
+	if(forw == 1){
+	}
+	if(backw == 1){
+	}
+
 	DrawEnts();
 	NextFrame();
+	printf("current level: %d\n", curLvl);
 	UpdateEnt();
 	Input();
 	tCol = col; /*Change state of background*/
@@ -65,7 +79,7 @@ int main(int argc, char *argv[])
 	keys = SDL_GetKeyState(&keyn);
 	col = tCol;
 	if(keys[SDLK_r]){
-		ReloadLevel(1);
+		rep = 1;
 	}
 	if(keys[SDLK_ESCAPE])done = 1;
   }while(!done);
