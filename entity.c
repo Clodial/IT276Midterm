@@ -128,26 +128,25 @@ void CharThink(Entity *self){
 		targ = redChar;
 	}
 	//check if player is in the air
-	if(self->active == 1){
-		printf("PLAYER IS ACTIVE AND SHOULD BE FALLING\n");
-		if(self->vy < MAX_FALL){
-			self->vy = self->vy + GRAVITY; 
-		}else{
-			self->vy = MAX_FALL;
+	//if(self->active == 1){
+	if(self->vy < MAX_FALL){
+		self->vy = self->vy + GRAVITY; 
+	}else{
+		self->vy = MAX_FALL;
+	}
+	if(self->vy < 0.0){//Allow the player to go in the air
+		if(self->vy > 0.0f && PlaceFree(self,self->x,self->y+(int)self->vy) == 0 && OtherPlayer(self,targ,self->x,self->y+(int)self->vy) == 0){
+			self->vy = 0.0f; //stop character from colliding into block
 		}
-		if(self->vy < 0.0){//Allow the player to go in the air
-			if(self->vy > 0.0f && PlaceFree(self,self->x,self->y+(int)self->vy) == 0 && OtherPlayer(self,targ,self->x,self->y+(int)self->vy) == 0){
-				self->vy = 0.0f; //stop character from colliding into block
-			}
-			self->y += (int)self->vy;
-		}else if(PlaceFree(self,self->x,self->y+1) == 1 && OtherPlayer(self,targ,self->x,self->y+1) == 0){
-			self->y += (int)self->vy;
-		}else{
-			self->vy = 0;
-			self->air = 0;
-		}
-		//self->y = self->y + (int)self->vy;
-	}else if(self->active == 0){
+		self->y += (int)self->vy;
+	}else if(PlaceFree(self,self->x,self->y+1) == 1 && OtherPlayer(self,targ,self->x,self->y+1) == 0){
+		self->y += (int)self->vy;
+	}else{
+		self->vy = 0;
+		self->air = 0;
+	}
+	//self->y = self->y + (int)self->vy;
+	if(self->active == 0){
 		if(BoxCollide(self,targ)){
 			if(targ->y > self->y);
 			targ->y = self->y - 32;
@@ -236,14 +235,24 @@ Entity *CreateGoal(int x, int y){
 	return goal;
 }
 void GoalThink(Entity *self){
+	printf("redPlayer: %d\n",LvlredF);
 	/*Check if redChar and blueChar are ontop of it*/
 	if(BoxCollide(self,redChar) == 1){
 		if(redChar->y < self->y)
 		redChar->y = self->y - 32;
+		LvlredF = 1;
+	}else{
+		LvlredF = 0;
 	}
 	if(BoxCollide(self,blueChar) == 1){
 		if(blueChar->y < self->y)
 		blueChar->y = self->y - 32;
+		LvlblueF = 1;
+	}else{
+		LvlblueF = 0;
+	}
+	if(LvlblueF == 1 && LvlredF == 1){
+		forw = 1;
 	}
 }
 

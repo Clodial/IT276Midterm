@@ -51,7 +51,7 @@ int *tile1[TILEY][TILEX] ={
 	{0,0,0,0,2,0,0,0,0,3,0,0,0,0,0,0,0,0,0,0},
 	{0,0,0,0,3,3,3,3,3,0,0,0,0,0,0,0,0,0,0,0},
 	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8,8,0,0},
+	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,8,0,0},
 	{0,0,0,0,4,4,3,3,5,5,3,3,3,3,3,3,0,0,0,0},
 	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -113,6 +113,8 @@ void LoadLvl(int curLevel){
 	Sprite *sprite;
 	Entity *ent;
 
+	forw = 0;
+	backw = 0;
 	rep = 0; // make sure the level doesn't keep repeating itself
 	printf("repeat: %d\n", rep);
 	chBox.h = 32;
@@ -177,25 +179,6 @@ void LoadLvl(int curLevel){
 				sprite = LoadSprite("images/purpFinish.png",32,32);
 				ent = CreateGoal(j*32,i*32);
 				//DrawSprite(ent->sprite,buffer,ent->x,ent->y,0);
-			}
-		}
-	}
-}
-void ClearLevel(){
-	int i,j;
-	int l,p;
-	for(i = 0; i < TILEY; i++){
-		for(j = 0; j < TILEX; j++){
-			if(maps[i][j] >= 3){
-				for(l = 0; l < MAXENTITIES; l++){
-					if(EntList[l]->x == j*32 && EntList[l]->y == i*32){
-						DestEnt(EntList[l]);
-					}
-				}
-			}else if(maps[i][j] == 1){
-				DestEnt(redChar);
-			}else if(maps[i][j] == 2){
-				DestEnt(blueChar);
 			}
 		}
 	}

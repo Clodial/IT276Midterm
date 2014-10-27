@@ -69,9 +69,16 @@ int main(int argc, char *argv[])
 		ClearAllEnt();
 		redChar = NULL; //SO THAT GRAVITY CAN WORK ON THEM
 		blueChar = NULL;
-		LoadLvl(0);
+		LoadLvl(curLvl);
 	}
 	if(forw == 1){
+		ClearAllEnt();
+		redChar = NULL;
+		blueChar = NULL;
+		if(curLvl < MAXLEVELS){
+			curLvl++;
+		}
+		LoadLvl(curLvl);
 	}
 	if(backw == 1){
 	}
