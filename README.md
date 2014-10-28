@@ -24,7 +24,9 @@ Space:
 Up:
   controls character that matches the color the background to jump
   
-  
+r key:
+  Restarts the level
+
 Different Elements:
 
 PLATFORMS:
