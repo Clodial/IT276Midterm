@@ -54,6 +54,10 @@ void	CharThink(Entity *self);
 Entity	*CreateBlock(int x, int y, Sprite *sprite, int mode);
 void	BlockThink(Entity *self);
 
+/*Phaseable Blocks*/
+Entity *CreatePhase(int x, int y, Sprite *sprite, int mode);
+void PhaseThink(Entity *self);
+
 /*Obstacles*/
 Entity	*CreateOb(int x, int y, Sprite *sprite, int mode);
 void	ObThink(Entity *self);

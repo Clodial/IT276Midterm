@@ -11,7 +11,6 @@ extern SDL_Rect Camera;
 
 void Init_All();
 extern int col; /*Change state of the level*/
-extern int inAir; /*This is to make sure that a player can change the background all willy nilly*/
 extern int curLvl;
 extern int rep;
 extern int forw;
@@ -37,7 +36,6 @@ int main(int argc, char *argv[])
   Init_Graphics();
   col = 0;
   temp = IMG_Load("images/redBack.png");
-  inAir = 1; /*This is something that will be determined based on if a character is in air*/
   if(temp != NULL){
 	bg = SDL_DisplayFormat(temp);
   }
@@ -49,31 +47,16 @@ int main(int argc, char *argv[])
   Init_All();
   do
   {
-    ResetBuffer();
-	//level sprite changing things
-	if(col == 0){
-		temp = IMG_Load("images/blueBack.png");
-	}else{
-		temp = IMG_Load("images/redBack.png");
-	}
-	if(temp != NULL){
-		bg = SDL_DisplayFormat(temp);
-	}
-	SDL_FreeSurface(temp);
-	if(bg != NULL){
-		SDL_BlitSurface(bg,NULL,buffer,NULL);
-	}
-	DrawEnts();
-	NextFrame();
 	UpdateEnt();
 	if(rep == 1){
-		//ClearLevel();
+		SDL_Delay(200);
 		ClearAllEnt();
 		redChar = NULL; //SO THAT GRAVITY CAN WORK ON THEM
 		blueChar = NULL;
 		LoadLvl(curLvl);
 	}
 	if(forw == 1){
+		SDL_Delay(200);
 		ClearAllEnt();
 		redChar = NULL;
 		blueChar = NULL;
@@ -90,6 +73,22 @@ int main(int argc, char *argv[])
 	if(keys[SDLK_r]){
 		rep = 1;
 	}
+    ResetBuffer();
+	//level sprite changing things
+	if(col == 0){
+		temp = IMG_Load("images/blueBack.png");
+	}else{
+		temp = IMG_Load("images/redBack.png");
+	}
+	if(temp != NULL){
+		bg = SDL_DisplayFormat(temp);
+	}
+	SDL_FreeSurface(temp);
+	if(bg != NULL){
+		SDL_BlitSurface(bg,NULL,buffer,NULL);
+	}
+	DrawEnts();
+	NextFrame();
 	if(keys[SDLK_ESCAPE])done = 1;
   }while(!done);
   exit(0);		/*technically this will end the program, but the compiler likes all functions that can return a value TO return a value*/

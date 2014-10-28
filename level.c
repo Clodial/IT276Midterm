@@ -113,10 +113,10 @@ void LoadLvl(int curLevel){
 	Sprite *sprite;
 	Entity *ent;
 
+	col = 0;
 	forw = 0;
 	backw = 0;
 	rep = 0; // make sure the level doesn't keep repeating itself
-	printf("repeat: %d\n", rep);
 	chBox.h = 32;
 	chBox.w = 32;
 
@@ -130,7 +130,6 @@ void LoadLvl(int curLevel){
 		memcpy(maps,*tile1,sizeof(tile1));
 	}
 
-	col = 1; /*Dye the level red*/
 	//Leave some room for extra levels
 	/*******
 	*

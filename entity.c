@@ -26,7 +26,6 @@ extern int forw;
 extern int backw;
 Entity *redChar;
 Entity *blueChar;
-int inAir;
 
 /*Main functions for initializing*/
 void InitEnt(){
@@ -116,7 +115,6 @@ Entity *CreateChar(int x, int y, Sprite *s, int m){
 		player->active = 1;
 		redChar = player;
 	}
-	printf("created player\n");
 	return player;
 }
 
@@ -142,22 +140,14 @@ void CharThink(Entity *self){
 	}else if(PlaceFree(self,self->x,self->y+1) == 1 && OtherPlayer(self,targ,self->x,self->y+1) == 0){
 		self->y += (int)self->vy;
 	}else{
-		self->vy = 0;
 		self->y = 32*(self->y/32);
+		self->vy = 0;
 		self->air = 0;
 	}
-	if(self == redChar){
-		printf("redChar active level -> %d\n", redChar->active);
-	}else{
-		printf("blueChar active level -> %d\n",blueChar->active);
-	}
-	//self->y = self->y + (int)self->vy;
-	if(self->active == 0){
-		if(BoxCollide(self,targ)){
-			if(targ->y > self->y);
-			targ->y = self->y - 32;
-			targ->air = 0;
-		}
+	if(BoxCollide(self,targ) && self->vy > 0.0f && self->y < targ->y){
+		self->vy = 0.0f;	
+		self->y = targ->y - 32;
+		self->air = 0;
 	}
 	if(self->x > 672 || self->x < -32 || self->y > 480){
 		rep = 1;
@@ -181,19 +171,33 @@ Entity *CreateBlock(int x, int y, Sprite *s, int m){
 	return block;
 }
 void BlockThink(Entity *self){
-	/*fix up those nasty collision problems*/
-	//if(BoxCollide(self,redChar) == 1 && (self->mode == M_PURP || self->mode == M_RED)){
-	//	if(redChar->y < self->y)
-	//	redChar->y = self->y - 32;
-	//	//LvlredF = 1;
-	//}
-	//if(BoxCollide(self,blueChar) == 1 && (self->mode == M_PURP || self->mode == M_BLUE)){
-	//	if(blueChar->y < self->y)
-	//	blueChar->y = self->y - 32;
-	//	//LvlblueF = 1;
-	//}
-
 	
+}
+
+Entity *CreatePhase(int x, int y, Sprite *s, int m){
+	Entity *phase;
+	phase = NewEnt();
+	if(phase == NULL) return phase;
+	phase->used = 1;
+	phase->solid = 1;
+	phase->sprite = s;
+	phase->mode = m;
+	phase->x = x;
+	phase->y = y;
+	phase->w = 32;
+	phase->h = 8;
+	phase->think = PhaseThink;
+	phase->frame = 0;
+	return phase;
+}
+void PhaseThink(Entity *self){
+	if(self->mode = M_RED){
+		if(BoxCollide(self,redChar) == 1 && redChar->vy > 0.0){
+			redChar->y = self->y - 32;
+			redChar->vy = 0.0f;
+			redChar->air = 0;
+		}
+	}
 }
 
 Entity *CreateOb(int x, int y, Sprite *s, int m){
@@ -263,30 +267,22 @@ void Input(){
 	int keyn;
 	Uint8 *keys;
 
-	while(SDL_PollEvent(&Event)){
-		switch(Event.type){
-			case SDL_KEYUP:
-				switch(Event.key.keysym.sym){
-					case SDLK_SPACE:
-						if(blueChar->air == 0 && redChar->air == 0){
-							if(col == 0){
-								redChar->active = 1;
-								blueChar->active = 0;
-								col = 1;
-							}else{ 
-								blueChar->active = 1;
-								redChar->active = 0;
-								col = 0;
-							}
-						}
-						break;
-				}
-				break;
-		}
-		break;
-	}
 	SDL_PumpEvents();
 	keys = SDL_GetKeyState(&keyn);
+	if(keys[SDLK_SPACE]){
+		if(blueChar->air == 0 && redChar->air == 0){
+			if(col == 0){
+				redChar->active = 1;
+				blueChar->active = 0;
+				col = 1;
+			}else if(col == 1){ 
+				blueChar->active = 1;
+				redChar->active = 0;
+				col = 0;
+			}
+		}
+		SDL_Delay(200); //so that holding the key won't be too much of an issue
+	}
 	if(keys[SDLK_UP]/* && BoxCollide(redChar,blueChar) == 0*/){
 		if(col == 1){
 			if(redChar->air == 0){
