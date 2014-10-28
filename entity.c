@@ -108,11 +108,11 @@ Entity *CreateChar(int x, int y, Sprite *s, int m){
 	player->h = 32;
 	player->think = CharThink;
 	player->frame = 0;
-	if(redChar != NULL){
-		player->active = 0; 
+	if(redChar != NULL && player->mode == M_BLUE){
+		player->active = 1; 
 		blueChar = player;
 	}else{
-		player->active = 1;
+		player->active = 0;
 		redChar = player;
 	}
 	return player;
@@ -120,6 +120,7 @@ Entity *CreateChar(int x, int y, Sprite *s, int m){
 
 void CharThink(Entity *self){
 	Entity *targ;
+	printf("self air state: %d\n",self->air);
 	if(self == redChar){
 		targ = blueChar;
 	}else{
@@ -140,13 +141,9 @@ void CharThink(Entity *self){
 		}
 		self->y += (int)self->vy;
 		self->air = 1;
-	}else if(PlaceFree(self,self->x,self->y+1) == 1 && OtherPlayer(self,targ,self->x,self->y+1) == 0){//check if another block is directly above it
+	}else if(PlaceFree(self,self->x,self->y+1) == 1 && OtherPlayer(self,targ,self->x,self->y+1) == 0 && PhaseCheck(self,self->x,self->y+1) == 0){//check if another block is directly above it
 		self->y += (int)self->vy;
 		self->air = 1;
-	}else if(PhaseFree(self,self->x,self->y+1) == 1){ //check if it's hitting a phaseable block
-		self->y = 32*(self->y/32);
-		self->vy = 0;
-		self->air = 0;
 	}else{ //if it is hitting a block
 		self->y = 32*(self->y/32);
 		self->vy = 0;
@@ -203,22 +200,12 @@ Entity *CreatePhase(int x, int y, Sprite *s, int m){
 	return phase;
 }
 void PhaseThink(Entity *self){
-	/*if(self->mode = M_RED){
-		if(BoxCollide(self,redChar) == 1 && redChar->y > self->y){
-			redChar->y = self->y - 32;
-			redChar->vy = 0.0f;
-			redChar->air = 0;
+	if(self->mode == M_BLUE){
+		if(PhaseCheck(blueChar,blueChar->x,blueChar->y + 1) == 1){
+			blueChar->y = self->y - 32;
 		}
 	}
-	if(self->mode = M_BLUE){
-		if(BoxCollide(self,blueChar) == 1 && blueChar->y > self->y){
-			blueChar->y = self->y - 32;
-			blueChar->vy = 0.0f;
-			blueChar->air = 0;
-		}
-	}*/
 }
-
 Entity *CreateOb(int x, int y, Sprite *s, int m){
 	Entity *obstacle;
 	obstacle = NewEnt();
@@ -263,21 +250,33 @@ Entity *CreateGoal(int x, int y){
 }
 void GoalThink(Entity *self){
 	/*Check if redChar and blueChar are ontop of it*/
-	if(BoxCollide(self,redChar) == 1){
-		if(redChar->y < self->y)
-		redChar->y = self->y - 32;
-		LvlredF = 1;
+	if(redChar->y <= self->y && redChar->y + 32 >= self->y && redChar->x < self->x + self->w && redChar->x + redChar->w > self->x && redChar->vy > 0){
+		redChar->y = 32*(redChar->y/32);
+		redChar->vy = 0.0f;
 		redChar->air = 0;
+	}
+	if(blueChar->y <= self->y && blueChar->y + 32 >= self->y && blueChar->x < self->x + self->w && blueChar->x + blueChar->w > self->x && blueChar->vy > 0){
+		blueChar->y = 32*(blueChar->y/32);
+		blueChar->vy = 0.0f;
+		blueChar->air = 0;
+	}
+	if(redChar->y + 32 >= self->y && redChar->x < self->x + self->w && redChar->x + redChar->w > self->x){
+		LvlredF = 1;
 	}else{
 		LvlredF = 0;
 	}
-	if(BoxCollide(self,blueChar) == 1){
-		if(blueChar->y < self->y)
-		blueChar->y = self->y - 32;
+	if(blueChar->y + 32 >= self->y && blueChar->x < self->x + self->w && blueChar->x + blueChar->w > self->x){
 		LvlblueF = 1;
-		blueChar->air = 0;
 	}else{
 		LvlblueF = 0;
+	}
+	if(redChar->y <= self->y + 36 && blueChar->y >= self->y+32 && redChar->x < self->x + self->w && redChar->x + redChar->w > self->x && redChar->vy <= 0){
+		redChar->vy = 0.0f;
+		redChar->air = 1;
+	}
+	if(blueChar->y <= self->y + 36 && blueChar->y >= self->y +32 && blueChar->x < self->x + self->w && blueChar->x + blueChar->w > self->x && blueChar->vy <= 0){
+		redChar->vy = 0.0f;
+		redChar->air = 0;
 	}
 	if(LvlblueF == 1 && LvlredF == 1){
 		forw = 1;
@@ -377,26 +376,23 @@ int BoxCollide(Entity *self, Entity *targ){
     if( self->y+self->h < targ->y || self->y > targ->y+targ->h ) return 0;
 	return 1;
 }
-int PhaseFree(Entity *ent, int x, int y){
-	int cx,cy; 
-	int cx2,cy2; //to check the full length
+//Function meant exclusively for a certain kind of platform
+int PhaseCheck(Entity *ent, int x, int y){
+	int cx, cy, cx2, cy2;
 
-
-	cx = x / 32; //get the tile that is there
-	cy = y / 32;
-	cx2 = (x + 31)/32;
-	cy2 = (y + 31)/32;
+	cx = x+32/32;
+	cy = y+32/32;
+	cx2 = (x + 33)/32;
+	cy2 = (y + 33)/32;
 
 	if(ent->mode == M_RED){
-		if((maps[cy][cx] == 10) || (maps[cy][cx2] == 10) || (maps[cy2][cx] == 10) || (maps[cy2][cx2] == 10)){
-			return 0; // basically saying that the tile desired is not free
-			printf("hit the box\n");
+		if(maps[cy][cx] == 9 || maps[cy][cx2] == 9 || maps[cy2][cx] == 9 || maps[cy2][cx2] == 9){
+			return 1;
 		}
 	}else if(ent->mode == M_BLUE){
-		if((maps[cy][cx] == 9) || (maps[cy][cx2] == 9) || (maps[cy2][cx] == 9) || (maps[cy2][cx2] == 9)){
-			return 0; // basically saying that the tile desired is not free
-			printf("hit the box\n");
+		if(maps[cy][cx] == 10 || maps[cy][cx2] == 10 || maps[cy2][cx] == 10 || maps[cy2][cx2] == 10){
+			return 1;
 		}
 	}
-	return 1;
+	return 0;
 }

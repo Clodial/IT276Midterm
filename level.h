@@ -11,7 +11,7 @@
 #define TILEW 32
 #define TILEX 20
 #define TILEY 15
-#define MAXLEVELS 3
+#define MAXLEVELS 4
 
 #include "SDL.h"
 
