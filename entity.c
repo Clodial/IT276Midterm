@@ -248,6 +248,7 @@ void GoalThink(Entity *self){
 		if(redChar->y < self->y)
 		redChar->y = self->y - 32;
 		LvlredF = 1;
+		redChar->air = 0;
 	}else{
 		LvlredF = 0;
 	}
@@ -255,6 +256,7 @@ void GoalThink(Entity *self){
 		if(blueChar->y < self->y)
 		blueChar->y = self->y - 32;
 		LvlblueF = 1;
+		blueChar->air = 0;
 	}else{
 		LvlblueF = 0;
 	}
@@ -298,12 +300,12 @@ void Input(){
 	}
 	if(keys[SDLK_RIGHT]){
 		if(col == 1){
-			if(PlaceFree(redChar,redChar->x+(int)VX,redChar->y) == 1 && OtherPlayer(redChar,blueChar, 1,0) == 0){
+			if(PlaceFree(redChar,redChar->x+(int)VX,redChar->y) == 1 && OtherPlayer(redChar,blueChar, redChar->w,0) == 0){
 				redChar->x += (int)VX;
 			}
 		}
 		else{
-			if(PlaceFree(blueChar,blueChar->x+(int)VX,blueChar->y) == 1 && OtherPlayer(blueChar, redChar,1,0) == 0){
+			if(PlaceFree(blueChar,blueChar->x+(int)VX,blueChar->y) == 1 && OtherPlayer(blueChar, redChar,blueChar->w,0) == 0){
 				blueChar->x += (int)VX;
 			}
 		}
