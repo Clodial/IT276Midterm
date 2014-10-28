@@ -126,7 +126,8 @@ void CharThink(Entity *self){
 		targ = redChar;
 	}
 	//check if player is in the air
-	//if(self->active == 1){
+
+	//if air = 0, allow switch
 	if(self->vy < MAX_FALL){
 		self->vy = self->vy + GRAVITY; 
 	}else{
@@ -134,18 +135,29 @@ void CharThink(Entity *self){
 	}
 	if(self->vy < 0.0){//Allow the player to go in the air
 		if(PlaceFree(self,self->x,self->y+(int)self->vy) == 0 && OtherPlayer(self,targ,self->x,self->y+(int)self->vy) == 0){
-			self->vy = 0.0f; //stop character from colliding into block
+			self->air = 1;
+			self->vy = 0.0f; //stop character from colliding into block overhead
 		}
 		self->y += (int)self->vy;
-	}else if(PlaceFree(self,self->x,self->y+1) == 1 && OtherPlayer(self,targ,self->x,self->y+1) == 0){
+		self->air = 1;
+	}else if(PlaceFree(self,self->x,self->y+1) == 1 && OtherPlayer(self,targ,self->x,self->y+1) == 0){//check if another block is directly above it
 		self->y += (int)self->vy;
-	}else{
+		self->air = 1;
+	}else if(PhaseFree(self,self->x,self->y+1) == 1){ //check if it's hitting a phaseable block
+		self->y = 32*(self->y/32);
+		self->vy = 0;
+		self->air = 0;
+	}else{ //if it is hitting a block
 		self->y = 32*(self->y/32);
 		self->vy = 0;
 		self->air = 0;
 	}
-	if(BoxCollide(self,targ) && self->vy > 0.0f && self->y < targ->y){
-		self->vy = 0.0f;	
+	if(BoxCollide(self,targ) && self->vy > 0.0f && self->y < targ->y){ //check if it's hitting another character
+		if(targ->vy >= 0.0){
+			self->vy = 0.0f;
+		}else{
+			self->vy = -16.0f;
+		}
 		self->y = targ->y - 32;
 		self->air = 0;
 	}
@@ -191,13 +203,20 @@ Entity *CreatePhase(int x, int y, Sprite *s, int m){
 	return phase;
 }
 void PhaseThink(Entity *self){
-	if(self->mode = M_RED){
-		if(BoxCollide(self,redChar) == 1 && redChar->vy > 0.0){
+	/*if(self->mode = M_RED){
+		if(BoxCollide(self,redChar) == 1 && redChar->y > self->y){
 			redChar->y = self->y - 32;
 			redChar->vy = 0.0f;
 			redChar->air = 0;
 		}
 	}
+	if(self->mode = M_BLUE){
+		if(BoxCollide(self,blueChar) == 1 && blueChar->y > self->y){
+			blueChar->y = self->y - 32;
+			blueChar->vy = 0.0f;
+			blueChar->air = 0;
+		}
+	}*/
 }
 
 Entity *CreateOb(int x, int y, Sprite *s, int m){
@@ -356,5 +375,28 @@ int OtherPlayer(Entity *self, Entity *targ, int vx, int vy){
 int BoxCollide(Entity *self, Entity *targ){
     if( self->x+self->w < targ->x || self->x > targ->x+targ->w ) return 0;
     if( self->y+self->h < targ->y || self->y > targ->y+targ->h ) return 0;
+	return 1;
+}
+int PhaseFree(Entity *ent, int x, int y){
+	int cx,cy; 
+	int cx2,cy2; //to check the full length
+
+
+	cx = x / 32; //get the tile that is there
+	cy = y / 32;
+	cx2 = (x + 31)/32;
+	cy2 = (y + 31)/32;
+
+	if(ent->mode == M_RED){
+		if((maps[cy][cx] == 10) || (maps[cy][cx2] == 10) || (maps[cy2][cx] == 10) || (maps[cy2][cx2] == 10)){
+			return 0; // basically saying that the tile desired is not free
+			printf("hit the box\n");
+		}
+	}else if(ent->mode == M_BLUE){
+		if((maps[cy][cx] == 9) || (maps[cy][cx2] == 9) || (maps[cy2][cx] == 9) || (maps[cy2][cx2] == 9)){
+			return 0; // basically saying that the tile desired is not free
+			printf("hit the box\n");
+		}
+	}
 	return 1;
 }

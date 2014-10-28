@@ -34,7 +34,8 @@ int rep;
 	*	6 = red Obstacle
 	*	7 = blue Obstacle
 	*	8 = purple Goal
-	*
+	*	9 = blue Phase
+	*	10 = red Phase
 	*******/
 
 int *tile1[TILEY][TILEX] ={
@@ -49,8 +50,8 @@ int *tile1[TILEY][TILEX] ={
 	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
 	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
-	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
+	{0,0,0,0,0,0,0,3,3,0,0,0,0,0,0,0,0,0,0,0},
+	{0,0,0,0,0,0,0,0,0,0,0,10,10,0,0,0,0,0,0,0},
 	{0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0},
 	{0,3,3,0,4,4,0,5,5,8,0,4,4,0,5,5,0,3,3,0},
 	{0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0},
@@ -167,17 +168,23 @@ void LoadLvl(int curLevel){
 				ent = CreateBlock(j*32,i*32,sprite,M_BLUE);
 				//DrawSprite(ent->sprite,buffer,ent->x,ent->y,0);
 			}else if(maps[i][j] == 6){
-				sprite = LoadSprite("images/redHaz.png",32,32);
+				sprite = LoadSprite("images/redHaz.png",32,16);
 				ent = CreateOb(j*32,i*32+16,sprite,M_RED);
 				//DrawSprite(ent->sprite,buffer,ent->x,ent->y+16,0);
 			}else if(maps[i][j] == 7){
-				sprite = LoadSprite("images/blueHaz.png",32,32);
+				sprite = LoadSprite("images/blueHaz.png",32,16);
 				ent = CreateOb(j*32,i*32+16,sprite,M_BLUE);
 				//DrawSprite(ent->sprite,buffer,ent->x,ent->y+26,0);
 			}else if(maps[i][j] == 8){
 				sprite = LoadSprite("images/purpFinish.png",64,32);
 				ent = CreateGoal(j*32,i*32);
 				//DrawSprite(ent->sprite,buffer,ent->x,ent->y,0);
+			}else if(maps[i][j] == 9){
+				sprite = LoadSprite("images/phaseBlue.png",32,8);
+				ent = CreatePhase(j*32,i*32,sprite,M_RED);
+			}else if(maps[i][j] == 10){
+				sprite = LoadSprite("images/phaseRed.png",32,8);
+				ent = CreatePhase(j*32,i*32,sprite, M_BLUE);
 			}
 		}
 	}
